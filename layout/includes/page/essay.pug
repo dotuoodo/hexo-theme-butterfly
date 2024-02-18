@@ -2,19 +2,16 @@
   .author-content.author-content-item.essayPage.single
     .card-content
       .author-content-item-tips 即刻短文
-      span.author-content-item-title 咸鱼的日常生活。
+      span.author-content-item-title 分享生活的小确幸
       .content-bottom
         .tips 使用 即刻短文静态部署版 构建
-      .banner-button-group
-        a.banner-button(onclick='pjax.loadUrl("/about/")', data-pjax-state)
-          i.fas.fa-circle-right(style='font-size: 1.5rem')
-          span.banner-button-text 关于我
   #bber
     section.timeline.page-1
       ul#waterfall.list
         each i in site.data.essay
           each item, index in i.essay_list
             if index < 30
+            - var contentText = item.image ? item.content + ' [图片]' : item.content
               li.bber-item
                 .bber-content
                   p.datacont= item.content
@@ -28,7 +25,7 @@
                         .bber-content-noimg
                     if item.aplayer
                       .bber-music
-                        .aplayer.no-destroy(data-id=item.aplayer.id data-server=item.aplayer.server data-type="song"  data-order="list" data-preload="none" data-autoplay="false" data-mutex="true" data-theme='var(--anzhiyu-main)')
+                        .aplayer.no-destroy(data-id=item.aplayer.id data-server=item.aplayer.server data-type="song"  data-order="list" data-preload="none" data-autoplay="false" data-mutex="true" data-theme='var(--heo-main)')
                 hr
                 .bber-bottom
                   .bber-info
@@ -44,7 +41,7 @@
                       .bber-info-from
                         i.fas.fa-fire
                         span=item.from
-                  .bber-reply(onclick="anzhiyu.commentText(" + `'${item.content}'` + ")")
+                  .bber-reply(onclick="bbtalk.commentText(" + `'${contentText}'` + ")")
                     i.fa-solid.fa-message
   #bber-tips(style='color: var(--heo-secondtext);')
     | - 只展示最近30条短文 -

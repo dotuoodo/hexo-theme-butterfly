@@ -6,16 +6,19 @@
         a.post-meta-original(title='该文章为转载文章，注意版权协议', data-pjax-state) #[=page.cc]
       else if page.cc !== false
         a.post-meta-original(title='该文章为原创文章，注意版权协议', data-pjax-state) 原创
-        
-      if page.cc 
-        span.post-meta-separator  |
+      
+      if page.cc  
+        span.post-meta-separator  -
 
       if page.custominfo
         a.post-meta-original(data-pjax-state) #[=page.custominfo]
+        span.post-meta-separator  
+
       if (theme.post_meta.post.categories && page.categories.data.length > 0)
         each item, index in page.categories.data
           span.post-meta-categories
             a(href=url_for(item.path), data-pjax-state).post-meta-categories #[=item.name]
+
       .tag_share
         if (theme.post_meta.post.tags)
           .post-meta__tag-list

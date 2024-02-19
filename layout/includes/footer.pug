@@ -20,10 +20,9 @@
   .footer-group
     h3.footer-title 直达
     .footer-links
-      a.footer-item(href="https://www.lvhrn.cn" target="_blank") 我的主页
+      a.footer-item(href="/" target="_blank") 我的主页
       a.footer-item(href="/music") 音乐欣赏
-      a.footer-item(href="/harbour") 心灵港湾
-      a.footer-item(href="/random.html") 随机文章
+      a.footer-item(href="toRandomPost()") 随机文章
   .footer-group
     h3.footer-title 关于
     .footer-links
@@ -41,27 +40,23 @@
   .footer-banner-links
     .footer-banner-left
       .footer-banner-left
+        span.footer-banner-link ©2021 - 2024 DOTUOODO
         #footer-banner-tips
-        //- script(src='https://cdn.jsdelivr.net/npm/typed.js/lib/typed.min.js')
-        //- script.
-        //-   var typed = new Typed("#footer-banner-tips", {
-        //-     strings: ["念念不忘，必有回响。", "Never forget, there will be echoes."],
-        //-     startDelay: 200,
-        //-     backDelay: 2000,
-        //-     typeSpeed: 100,
-        //-     loop: true,
-        //-     backSpeed: 20
-        //-   })
+        
+
+        script(src='https://cdn.jsdelivr.net/npm/typed.js/lib/typed.min.js')
+        script.
+          var typed = new Typed("#footer-banner-tips", {
+            strings: ["永远不要熄灭心中的火，哪怕别人只看见烟。", "来自 互联网",],
+            startDelay: 200,
+            backDelay: 2000,
+            typeSpeed: 100,
+            loop: true,
+            backSpeed: 20
+          })
+          
 
     .footer-banner-right
-      a.footer-banner-link(href="https://hexo.io/zh-cn/" title="Hexo") 框架
-      a.footer-banner-link |
-      a.footer-banner-link(href="https://github.com/jerryc127/hexo-theme-butterfly" title="theme") 主题
-      a.footer-banner-link |
-      a.footer-banner-link(href="/atom.xml" title="RSS") 订阅
+      a.footer-banner-link(href="https://github.com/dotuoodo/hexo-theme-butterfly" title="theme") 主题
       a.footer-banner-link |
       a.footer-banner-link(href="/about/" title="about") 关于
-      a.footer-banner-link |
-      a.footer-banner-link.cc(href="/cc/" title="cc协议")
-        i.iconfont.icon-cc
-        span 协议

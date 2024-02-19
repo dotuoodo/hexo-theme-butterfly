@@ -1,0 +1,32 @@
+- var pageBackground = 'background: url(' + page.top_bg + ') left 28% / cover no-repeat;'
+- var top_color = page.top_color
+
+
+
+mixin list
+  .banner-card-content
+    .banner-content-item-tips= page.top_item
+    span.banner-content-item-title= page.top_title || page.title 
+    .banner-content-bottom
+      .banner-tips= page.top_tips || page.description
+      - if (typeof page.top_link !== 'undefined' && page.top_link && page.top_link.trim().length > 0)
+        if (page.top_link.startsWith('/'))
+          - var pageLink = '' + page.top_link + ''
+        else if (!page.top_link.startsWith('http') && !page.top_link.startsWith('https'))
+          - var pageLink = 'https://' + page.top_link + ''
+        else
+          - var pageLink = '' + page.top_link + ''
+        .banner-button-group
+            a.banner-button(href=pageLink)
+              i.fas.fa-arrow-circle-right.banner-go-right(style='font-size: .9rem')
+              span.banner-button-text= page.top_text
+
+
+#banner_page
+if(typeof page.top_color !== 'undefined' && top_color === true)
+  .banner-content(style=pageBackground)
+    +list
+else
+  .banner-content-black(style=pageBackground)
+    +list
+

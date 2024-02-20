@@ -13,6 +13,9 @@ mixin rightsideItem(array)
         if darkmode.enable && darkmode.button
           button#darkmode(type="button" title=_p('rightside.night_mode_title'))
             i.fas.fa-adjust
+      when 'toggleUniverse'
+          button#toggleUniverse(type="button" title=_p('关闭/开启背景流星特效') onclick="toggleUniverse()")
+            i.fas.fa-wand-magic-sparkles
       when 'hideAside'
         if aside.enable && aside.button && page.aside !== false
           button#hide-aside-btn(type="button" title=_p('rightside.aside'))
@@ -32,7 +35,7 @@ mixin rightsideItem(array)
 
 #rightside
   - const { enable, hide, show } = theme.rightside_item_order
-  - const hideArray = enable ? hide && hide.split(',') : ['readmode','translate','hideAside']
+  - const hideArray = enable ? hide && hide.split(',') : ['readmode','translate','hideAside', 'toggleUniverse']
   - const showArray = enable ? show && show.split(',') : ['toc','chat','comment','darkmode']
 
   

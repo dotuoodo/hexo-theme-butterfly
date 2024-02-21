@@ -16,13 +16,13 @@
       if (theme.post_meta.post.categories && page.categories.data.length > 0)
         each item, index in page.categories.data
           span.post-meta-categories
-            a(href=url_for(item.path)).post-meta-categories #[=item.name]
+            a(href=url_for(item.path) onclick="window.event.cancelBubble=true;").post-meta-categories #[=item.name]
 
       .tag_share
         if (theme.post_meta.post.tags)
           .post-meta__tag-list
             each item, index in page.tags.data
-              a(href=url_for(item.path)).post-meta__tags
+              a(href=url_for(item.path) onclick="window.event.cancelBubble=true;").post-meta__tags
                   span.tags-name.tags-punctuation #[=item.name]
                   
 

@@ -6,8 +6,8 @@ if is_home()
                 #bannerGroup
                     #banners
                         .banners-title
-                            .banners-title-big 无限活力
-                            .banners-title-big 与热爱生活
+                            //- .banners-title-big 无限活力
+                            .banners-title-big 热爱生活
                             .banners-title-small DOTUOODO
                         .tags-group-all
                             .tags-group-wrapper
@@ -35,15 +35,15 @@ if is_home()
                             span.bannerText 随便逛逛
                             i.fas.fa-arrow-right.banner-righticon
                     .categoryGroup
-                        .categoryItem(style='box-shadow:var(--bywind-shadow-blue)')
+                        .categoryItem(style='box-shadow:var(--dot-shadow-blue)')
                             a.categoryButton.CB1.bikan(href='/categories/学习笔记/')
                                 span.categoryButtonText 必看精选
                                 i.fas.fa-dove
-                        .categoryItem(style='box-shadow:var(--bywind-shadow-red)')
+                        .categoryItem(style='box-shadow:var(--dot-shadow-red)')
                             a.categoryButton.remen(href='/tags/热门/')
                                 span.categoryButtonText 热门文章
                                 i.fas.fa-burn
-                        .categoryItem(style='box-shadow:var(--bywind-shadow-green)')
+                        .categoryItem(style='box-shadow:var(--dot-shadow-green)')
                             a.categoryButton.shiyong(href='/categories/实用教程/')
                                 span.categoryButtonText 实用教程
                                 i.fas.fa-book
@@ -61,11 +61,11 @@ if is_home()
                         .todayCard-info
                             .todayCard-tips 最佳记忆
                             .todayCard-title
-                                | 山河远阔，人间烟火
+                                | 永远不要熄灭心中的火
                                 br
-                                | 无一是你，无一不是你
+                                | 哪怕别人只看见烟
                         .todayCard-cover(style='background:url(/img/todayCardCover.jpeg) no-repeat center/cover', onerror='this.onerror=null,this.src="/img/404.png"')
                         .banner-button-group
-                            a.banner-button(onclick='window.event.cancelBubble=!0,bywind.hideTodayCard()')
-                                i.hnfont.icon-add-circle-fill
+                            a.banner-button(onclick='window.event.cancelBubble=!0,hideTodayCard()')
+                                i.fas.fa-circle-plus
                                 span.banner-button-text 更多推荐

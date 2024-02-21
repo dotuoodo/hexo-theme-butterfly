@@ -19,7 +19,7 @@
                         .bber-content-noimg
                     if item.aplayer
                       .bber-music
-                        .aplayer.no-destroy(data-id=item.aplayer.id data-server=item.aplayer.server data-type="song"  data-order="list" data-preload="none" data-autoplay="false" data-mutex="true" data-theme='var(--heo-main)')
+                        .aplayer.no-destroy(data-id=item.aplayer.id data-server=item.aplayer.server data-type="song"  data-order="list" data-preload="none" data-autoplay="false" data-mutex="true" data-theme='var(--dot-main)')
                 hr
                 .bber-bottom
                   .bber-info
@@ -37,5 +37,5 @@
                         span=item.from
                   .bber-reply(onclick="bbtalk.commentText(" + `'${contentText}'` + ")")
                     i.fa-solid.fa-message
-  #bber-tips(style='color: var(--heo-secondtext);')
+  #bber-tips(style='color: var(--dot-secondtext);')
     | - 只展示最近30条短文 -

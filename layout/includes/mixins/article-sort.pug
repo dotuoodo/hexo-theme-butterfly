@@ -18,6 +18,7 @@ mixin articleSort(posts)
         .article-sort-item-info
           .article-sort-item-time
             i.far.fa-calendar-alt
-            time.post-meta-date-created(datetime=date_xml(article.date) title=_p('post.created') + ' ' + full_date(article.date))= date(article.date, config.date_format)
+            //- time.post-meta-date-created(datetime=date_xml(article.date) title=_p('post.created') + ' ' + full_date(article.date))= date(article.date, config.date_format)
+            - time.post-meta-date-created(datetime=date_xml(article.date) title=' ' + full_date(article.date))= date(article.date, config.date_format)
           a.article-sort-item-title(href=url_for(article.path) title=title)= title
     - })

@@ -1,0 +1,35 @@
+#stuff
+  - var result = ''
+  each i in site.data.stuff
+    - let className = i.class_name ? markdown(`## ${i.class_name}`) : ""
+    - let classDesc = i.class_desc ? `<div class="stuff-desc">${i.class_desc}</div>` : ""
+
+    - let listResult = `${className}${classDesc} `
+    - let listContent = ''
+    each j in i.stuff_list
+      - let details = ''
+      -
+        if (j.details_link) {
+          details = `<a href="${j.details_link}" title="本站关于 ${j.name} 的博文" rel="external nofollow">查看文章</a>`
+        } else if (j.details_flink) {
+          details = `<a href="${j.details_flink}" title="跳转到 ${j.name} 详情" target="_blank" rel="external nofollow">详情</a>`
+        }
+        listContent += `
+          <div class="stuff-box">
+            <img src="${j.image}">
+            <div class="stuff-content">
+              <div class="stuff-name">${j.name}</div>
+              <div class="stuff-custom">${j.custom}</div>
+              <div class="stuff-opinion">${j.opinion}</div>
+              <div class="stuff-box-more">
+                ${details}
+                <div class="stuff-bber-reply" onclick="bbtalk.commentText('${j.name} (${j.custom})')">
+                  <i class="fa-solid fa-message"></i>
+                </div>
+              </div>
+            </div>
+          </div>`
+      -
+    - listResult += `<div class="stuff">${listContent}</div>`
+    - result += listResult
+  != result + page.content

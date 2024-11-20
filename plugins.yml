@@ -1,15 +1,15 @@
 abcjs_basic_js:
   name: abcjs
   file: dist/abcjs-basic-min.js
-  version: 6.4.3
+  version: 6.4.4
 activate_power_mode:
   name: butterfly-extsrc
   file: dist/activate-power-mode.min.js
   version: 1.1.4
 algolia_search:
   name: algoliasearch
-  file: dist/algoliasearch-lite.umd.js
-  version: 5.7.0
+  file: dist/lite/builds/browser.umd.js
+  version: 5.12.0
 aplayer_css:
   name: aplayer
   file: dist/APlayer.min.css
@@ -42,6 +42,10 @@ canvas_ribbon:
   name: butterfly-extsrc
   file: dist/canvas-ribbon.min.js
   version: 1.1.4
+chartjs:
+  name: chart.js
+  file: dist/chart.umd.js
+  version: 4.4.6
 clickShowText:
   name: butterfly-extsrc
   file: dist/click-show-text.min.js
@@ -62,12 +66,12 @@ docsearch_css:
   name: '@docsearch/css'
   other_name: docsearch-css
   file: dist/style.css
-  version: 3.6.2
+  version: 3.6.3
 docsearch_js:
   name: '@docsearch/js'
   other_name: docsearch-js
   file: dist/umd/index.js
-  version: 3.6.2
+  version: 3.6.3
 egjs_infinitegrid:
   name: '@egjs/infinitegrid'
   other_name: egjs-infinitegrid
@@ -107,7 +111,7 @@ instantpage:
 instantsearch:
   name: instantsearch.js
   file: dist/instantsearch.production.min.js
-  version: 4.74.2
+  version: 4.75.3
 katex:
   name: katex
   file: dist/katex.min.css
@@ -133,7 +137,7 @@ medium_zoom:
 mermaid:
   name: mermaid
   file: dist/mermaid.min.js
-  version: 11.2.1
+  version: 11.4.0
 meting_js:
   name: butterfly-extsrc
   file: metingjs/dist/Meting.min.js

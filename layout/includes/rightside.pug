@@ -9,6 +9,9 @@ mixin rightsideItem(array)
       when 'translate'
         if translate.enable
           button#translateLink(type="button" title=_p('rightside.translate_title'))= translate.default
+      when 'toggleUniverse'
+          button#toggleUniverse(type="button" title=_p('关闭/开启背景流星特效') onclick="toggleUniverse()")
+            i.fas.fa-wand-magic-sparkles
       when 'darkmode'
         if darkmode.enable && darkmode.button
           button#darkmode(type="button" title=_p('rightside.night_mode_title'))
@@ -32,7 +35,7 @@ mixin rightsideItem(array)
 
 #rightside
   - const { enable, hide, show } = theme.rightside_item_order
-  - const hideArray = enable ? hide && hide.split(',') : ['readmode','translate','darkmode','hideAside']
+  - const hideArray = enable ? hide && hide.split(',') : ['readmode','translate','toggleUniverse','darkmode','hideAside']
   - const showArray = enable ? show && show.split(',') : ['toc','chat','comment']
 
   

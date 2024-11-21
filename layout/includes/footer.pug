@@ -35,8 +35,12 @@
         //-     backSpeed: 20
         //-   })
           
-
-    .footer-banner-right
-      a.footer-banner-link(href="https://hexo.io/") Hexo
-      a.footer-banner-link |
-      a.footer-banner-link(href="https://github.com/jerryc127/hexo-theme-butterfly" title="theme") Butterfly
+    if theme.footer_link
+      .footer-banner-right
+        each value, label in theme.footer_link
+          if typeof value !== 'object'
+            - const [link, icon] = value.split('||').map(part => trim(part))
+            a.footer-banner-link(href=url_for(link))
+              if icon
+                i.fa-fw(class=icon)
+              span= ' ' + label

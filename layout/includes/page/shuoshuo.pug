@@ -46,59 +46,58 @@
     script.
       (() => {
         const limitConfig = !{ JSON.stringify(page.limit || {}) }
-
-        const sortDataByDate = data => data.sort((a, b) => new Date(b.date) - new Date(a.date))
-
-        const filterDataByLimit = (data, limit) => {
-          if (!limit || !limit.type) return data
-          if (limit.type === 'num') return data.slice(0, limit.value)
-          if (limit.type === 'date') {
-            const limitDate = new Date(limit.value)
-            return data.filter(item => new Date(item.date) >= limitDate)
-          }
-          return data
-        };
-
-        const formatToTimeZone = (date) => {
-          const fullDate = date.length === 10 ? `${date} 00:00:00` : date
-          const visitorTimeZone = '#{config.timezone}' || Intl.DateTimeFormat().resolvedOptions().timeZone
-          const options = {
-            timeZone: visitorTimeZone,
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: false
-          }
-          const [day, month, year, hour, minute, second] = new Intl.DateTimeFormat('en-GB', options)
-            .format(new Date(fullDate))
-            .match(/\d+/g)
-          return `${year}-${month}-${day} ${hour}:${minute}:${second}`
-        }
+        let pageCode = ""
+        let filterValue = "creator=='users/1'&&visibilities==['PUBLIC']"
+        let encodedFilterValue = encodeURIComponent(filterValue)
+        let url = `!{url_for(page.shuoshuo_url)}/api/v1/memos?filter=${encodedFilterValue}`
 
         const loadShuoshuo = async () => {
           try {
-            const response = await fetch('!{url_for(page.shuoshuo_url)}')
+            if (pageCode != ''){
+              url = `!{url_for(page.shuoshuo_url)}/api/v1/memos?pageToken=${pageCode}&filter=${encodedFilterValue}`
+            }else{
+              let url = `!{url_for(page.shuoshuo_url)}/api/v1/memos?filter=${encodedFilterValue}`
+            }
+      
+            const response = await fetch(url)
             let data = await response.json()
+            let memos = data.memos
 
-            data = filterDataByLimit(sortDataByDate(data), limitConfig)
+            if (data.nextPageToken != ''){
+              pageCode = data.nextPageToken
+              main = document.querySelector("#page")
+              main.innerHTML += '<button id="loadmore" type="button">加载更多</button>';
+
+              let btn = document.querySelector("#loadmore")
+              btn.addEventListener("click", function () {
+                window.pjax ? loadShuoshuo() : window.addEventListener('load', loadShuoshuo)
+                if (pageCode != "") {
+                    document.querySelector("#loadmore").remove()
+                    return
+                }
+              })
+            }
 
             const container = document.getElementById('article-container')
             let start = 0
 
             const renderData = (dataSlice) => {
               const content = dataSlice.map(item => {
-                const formattedDate = formatToTimeZone(item.date)
-                const tags = item.tags && item.tags.map(tag => `<span class="shuoshuo-tag">${tag}</span>`).join('') || ''
-                const commentButton = item.key && !{commentsJsLoad}
+                const formattedDate = item.createTime
+                const tags = item.property.tags && item.property.tags.map(tag => `<span class="shuoshuo-tag">${tag}</span>`).join('') || ''
+                let resources = null
+                if(item.resources!="[]"){
+                  resources = item.resources && item.resources.map(resources => `<span class="shuoshuo-resources-image"><img data-thumb="!{url_for(page.shuoshuo_url)}/file/${resources.name}/${resources.filename}?thumbnail=true" src="!{url_for(page.shuoshuo_url)}/file/${resources.name}/${resources.filename}"></span>`).join('') || ''
+                }
+                const regex = /#\S+ /g;
+                
+                const commentButton = item.name && !{commentsJsLoad}
                   ? `<div class="shuoshuo-comment-btn" onclick="addCommentToShuoshuo(event)">
                       <i class="fa-solid fa-comments"></i>
                     </div>`
                   : ''
-                const commentContainer = item.key
-                  ? `<div class="shuoshuo-comment no-comment" data-key="${item.key}"></div>`
+                const commentContainer = item.name
+                  ? `<div class="shuoshuo-comment no-comment" data-key="${item.name}"></div>`
                   : ''
 
                 return `
@@ -115,7 +114,8 @@
                           </time>
                         </div>
                       </div>
-                      <div class="shuoshuo-content">${item.content}</div>
+                      <div class="shuoshuo-content">${item.content.replace(regex,"")}</div>
+                      <div class="shuoshuo-resources">${resources}</div>
                       <div class="shuoshuo-footer ${tags ? 'flex-between' : 'flex-end'}">
                         ${tags ? `<div class="shuoshuo-tags">${tags}</div>` : ''}
                         ${commentButton}
@@ -135,11 +135,11 @@
               if (!entries[0].isIntersecting) return
               observer.unobserve(entries[0].target)
 
-              const slice = data.slice(start, start + 10)
+              const slice = memos.slice(start, start + 10)
               renderData(slice)
               start += 10
 
-              if (start < data.length) {
+              if (start < memos.length) {
                 setTimeout(() => observer.observe(container.lastElementChild), 100)
               } else {
                 observer.disconnect()
@@ -152,7 +152,7 @@
               threshold: 1.0
             })
 
-            renderData(data.slice(start, 10))
+            renderData(memos.slice(start, 10))
             start += 10
 
             if (container.lastElementChild) observer.observe(container.lastElementChild)

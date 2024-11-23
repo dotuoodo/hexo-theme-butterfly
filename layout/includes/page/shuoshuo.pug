@@ -87,7 +87,7 @@
                 const tags = item.property.tags && item.property.tags.map(tag => `<span class="shuoshuo-tag">${tag}</span>`).join('') || ''
                 let resources = null
                 if(item.resources!="[]"){
-                  resources = item.resources && item.resources.map(resources => `<span class="shuoshuo-resources-image"><img data-thumb="!{url_for(page.shuoshuo_url)}/file/${resources.name}/${resources.filename}?thumbnail=true" src="!{url_for(page.shuoshuo_url)}/file/${resources.name}/${resources.filename}"></span>`).join('') || ''
+                  resources = item.resources && item.resources.map(resources => `<span class="shuoshuo-resources-image"><img src="!{url_for(page.shuoshuo_url)}/file/${resources.name}/${resources.filename}"></span>`).join('') || ''
                 }
                 const regex = /#\S+ /g;
                 

@@ -89,7 +89,23 @@
                 if(item.resources!="[]"){
                   resources = item.resources && item.resources.map(resources => `<span class="shuoshuo-resources-image"><img src="!{url_for(page.shuoshuo_url)}/file/${resources.name}/${resources.filename}"></span>`).join('') || ''
                 }
-                const regex = /#\S+ /g;
+                let content = item.content.replace(/#\S+ /g,"")
+
+                // Checkbox
+                const lines = content.split('\n');
+                content = '';
+
+                lines.forEach((line,i)=> {
+                    if (/- \[( )\]/.test(line)) {
+                        content += `<input type="checkbox" disabled><label>${line.replace(/- \[( )\]/, '')}</label><br>`
+                    } else if (/- \[(x)\]/.test(line)) {
+                        content += `<input type="checkbox" checked disabled><label>${line.replace(/- \[(x)\]/, '')}</label><br>`
+                    } else if(i != lines.length - 1) {
+                        content += `${line}<br>`
+                    } else {
+                        content += `${line}`
+                    }
+                })
                 
                 const commentButton = item.name && !{commentsJsLoad}
                   ? `<div class="shuoshuo-comment-btn" onclick="addCommentToShuoshuo(event)">
@@ -114,7 +130,7 @@
                           </time>
                         </div>
                       </div>
-                      <div class="shuoshuo-content">${item.content.replace(regex,"")}</div>
+                      <div class="shuoshuo-content">${content}</div>
                       <div class="shuoshuo-resources">${resources}</div>
                       <div class="shuoshuo-footer ${tags ? 'flex-between' : 'flex-end'}">
                         ${tags ? `<div class="shuoshuo-tags">${tags}</div>` : ''}

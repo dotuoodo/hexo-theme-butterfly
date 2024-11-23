@@ -95,23 +95,9 @@
                    </span>
                   `).join('') || ''
                 }
-                let content = item.content.replace(/#\S+ /g,"")
-
-                // Checkbox
-                const lines = content.split('\n');
-                content = '';
-
-                lines.forEach((line,i)=> {
-                    if (/- \[( )\]/.test(line)) {
-                        content += `<input type="checkbox" disabled><label>${line.replace(/- \[( )\]/, '')}</label><br>`
-                    } else if (/- \[(x)\]/.test(line)) {
-                        content += `<input type="checkbox" checked disabled><label>${line.replace(/- \[(x)\]/, '')}</label><br>`
-                    } else if(i != lines.length - 1) {
-                        content += `${line}<br>`
-                    } else {
-                        content += `${line}`
-                    }
-                })
+                //- let content = item.content.replace(/#\S+ /g,"")
+                let content = item.content.replace(/^(#\S+\s*)+/, '')
+                content = DOMPurify.sanitize(marked.parse(content.replace(/^[\u200B\u200C\u200D\u200E\u200F\uFEFF]/,"")))
                 
                 const commentButton = item.name && !{commentsJsLoad}
                   ? `<div class="shuoshuo-comment-btn" onclick="addCommentToShuoshuo(event)">

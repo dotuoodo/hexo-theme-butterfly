@@ -87,7 +87,13 @@
                 const tags = item.property.tags && item.property.tags.map(tag => `<span class="shuoshuo-tag">${tag}</span>`).join('') || ''
                 let resources = null
                 if(item.resources!="[]"){
-                  resources = item.resources && item.resources.map(resources => `<span class="shuoshuo-resources-image"><img src="!{url_for(page.shuoshuo_url)}/file/${resources.name}/${resources.filename}"></span>`).join('') || ''
+                  resources = item.resources && item.resources.map(resources => `
+                  <span class="shuoshuo-resources-image">
+                    <a href="!{url_for(page.shuoshuo_url)}/file/${resources.name}/${resources.filename}" data-fancybox="gallery" data-src="!{url_for(page.shuoshuo_url)}/file/${resources.name}/${resources.filename}">
+                      <img class="lazy" src="!{url_for(page.shuoshuo_url)}/file/${resources.name}/${resources.filename}?thumbnail=true">
+                    </a>                 
+                   </span>
+                  `).join('') || ''
                 }
                 let content = item.content.replace(/#\S+ /g,"")
 

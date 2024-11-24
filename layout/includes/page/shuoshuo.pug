@@ -164,8 +164,21 @@
             renderData(memos.slice(start, 10))
             start += 10
 
-            const event = new CustomEvent('jsonLoaded', { detail: data })
-            window.dispatchEvent(event)
+            // 获取评论数
+            const eleGroup = document.querySelectorAll('.artalk-count')
+            const keyArray = Array.from(eleGroup).map(i => i.getAttribute('data-page-key'))
+            const headerList = {
+              method: 'GET',
+            }
+            const searchParams = new URLSearchParams({
+              'site_name': '!{artalkSite}',
+              'page_keys': keyArray
+            })
+            const res = await fetch(`!{artalkServer}/api/v2/stats/page_comment?${searchParams}`, headerList)
+            const result = await res.json()
+            keyArray.forEach((key, index) => {
+              eleGroup[index].textContent = result.data[key] || 0
+            })
             
             if (container.lastElementChild) observer.observe(container.lastElementChild)
           } catch (error) {
@@ -174,36 +187,6 @@
         };
 
         window.pjax ? loadShuoshuo() : window.addEventListener('load', loadShuoshuo)
-      })()
-
-    script.
-      (() => {
-        const getArtalkCount = async() => {
-          try {
-            const eleGroup = document.querySelectorAll('.artalk-count')
-            const keyArray = Array.from(eleGroup).map(i => i.getAttribute('data-page-key'))
-
-            const headerList = {
-              method: 'GET',
-            }
-
-            const searchParams = new URLSearchParams({
-              'site_name': '!{artalkSite}',
-              'page_keys': keyArray
-            })
-
-            const res = await fetch(`!{artalkServer}/api/v2/stats/page_comment?${searchParams}`, headerList)
-            const result = await res.json()
-
-            keyArray.forEach((key, index) => {
-              eleGroup[index].textContent = result.data[key] || 0
-            })
-          } catch (err) {
-            console.error(err)
-          }
-        }
-
-        window.pjax ? getArtalkCount() : window.addEventListener('jsonLoaded', getArtalkCount)
       })()
   else
     if site.data.shuoshuo

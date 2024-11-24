@@ -7,7 +7,7 @@
 //-     - tag2
 
 - page.toc = false
-
+- const { server, site } = theme.artalk
 #article-container
   if page.comments !== false && theme.comments.use
     - commentsJsLoad = true
@@ -95,12 +95,12 @@
                    </span>
                   `).join('') || ''
                 }
-                //- let content = item.content.replace(/#\S+ /g,"")
                 let content = item.content.replace(/^(#\S+\s*)+/, '')
                 content = DOMPurify.sanitize(marked.parse(content.replace(/^[\u200B\u200C\u200D\u200E\u200F\uFEFF]/,"")))
                 
                 const commentButton = item.name && !{commentsJsLoad}
                   ? `<div class="shuoshuo-comment-btn" onclick="addCommentToShuoshuo(event)">
+                      <span class="artalk-count" data-page-key="/essay?key=${item.name}"></span>
                       <i class="fa-solid fa-comments"></i>
                     </div>`
                   : ''
@@ -163,6 +163,9 @@
             renderData(memos.slice(start, 10))
             start += 10
 
+            const event = new CustomEvent('jsonLoaded', { detail: data }); 
+            window.dispatchEvent(event);
+            
             if (container.lastElementChild) observer.observe(container.lastElementChild)
           } catch (error) {
             console.error(error)
@@ -170,6 +173,38 @@
         };
 
         window.pjax ? loadShuoshuo() : window.addEventListener('load', loadShuoshuo)
+      })()
+
+    script.
+      (() => {
+        const getArtalkCount = async() => {
+          try {
+            console.log("getArtalkCount")
+            const eleGroup = document.querySelectorAll('.artalk-count')
+            console.log(eleGroup)
+            const keyArray = Array.from(eleGroup).map(i => i.getAttribute('data-page-key'))
+
+            const headerList = {
+              method: 'GET',
+            }
+
+            const searchParams = new URLSearchParams({
+              'site_name': '!{site}',
+              'page_keys': keyArray
+            })
+
+            const res = await fetch(`!{server}/api/v2/stats/page_comment?${searchParams}`, headerList)
+            const result = await res.json()
+
+            keyArray.forEach((key, index) => {
+              eleGroup[index].textContent = result.data[key] || 0
+            })
+          } catch (err) {
+            console.error(err)
+          }
+        }
+
+        window.pjax ? getArtalkCount() : window.addEventListener('jsonLoaded', getArtalkCount)
       })()
   else
     if site.data.shuoshuo

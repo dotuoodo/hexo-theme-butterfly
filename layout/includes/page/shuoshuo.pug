@@ -7,7 +7,8 @@
 //-     - tag2
 
 - page.toc = false
-- const { server, site } = theme.artalk
+- const artalkServer = theme.artalk.server
+- const artalkSite = theme.artalk.site
 #article-container
   if page.comments !== false && theme.comments.use
     - commentsJsLoad = true
@@ -163,8 +164,8 @@
             renderData(memos.slice(start, 10))
             start += 10
 
-            const event = new CustomEvent('jsonLoaded', { detail: data }); 
-            window.dispatchEvent(event);
+            const event = new CustomEvent('jsonLoaded', { detail: data })
+            window.dispatchEvent(event)
             
             if (container.lastElementChild) observer.observe(container.lastElementChild)
           } catch (error) {
@@ -179,9 +180,7 @@
       (() => {
         const getArtalkCount = async() => {
           try {
-            console.log("getArtalkCount")
             const eleGroup = document.querySelectorAll('.artalk-count')
-            console.log(eleGroup)
             const keyArray = Array.from(eleGroup).map(i => i.getAttribute('data-page-key'))
 
             const headerList = {
@@ -189,11 +188,11 @@
             }
 
             const searchParams = new URLSearchParams({
-              'site_name': '!{site}',
+              'site_name': '!{artalkSite}',
               'page_keys': keyArray
             })
 
-            const res = await fetch(`!{server}/api/v2/stats/page_comment?${searchParams}`, headerList)
+            const res = await fetch(`!{artalkServer}/api/v2/stats/page_comment?${searchParams}`, headerList)
             const result = await res.json()
 
             keyArray.forEach((key, index) => {
@@ -229,3 +228,6 @@
                   i.fa-solid.fa-comments
           if i.key && commentsJsLoad
             .shuoshuo-comment.no-comment(data-key=i.key)
+
+  #article-container.container
+    != page.content

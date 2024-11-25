@@ -101,7 +101,7 @@
                 
                 const commentButton = item.name && !{commentsJsLoad}
                   ? `<div class="shuoshuo-comment-btn" onclick="addCommentToShuoshuo(event)">
-                      <span class="artalk-count" data-page-key="/essay?key=${item.name}"></span>
+                      <span class="artalk-count" data-page-key="/essay?key=${item.name}"><i class="fa-solid fa-spinner fa-spin"></i></span>
                       <i class="fa-solid fa-comments"></i>
                     </div>`
                   : ''

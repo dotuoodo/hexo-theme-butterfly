@@ -52,6 +52,25 @@
         let encodedFilterValue = encodeURIComponent(filterValue)
         let url = `!{url_for(page.shuoshuo_url)}/api/v1/memos?filter=${encodedFilterValue}`
 
+        const formatToTimeZone = (date) => {
+          const fullDate = date.length === 10 ? `${date} 00:00:00` : date
+          const visitorTimeZone = '#{config.timezone}' || Intl.DateTimeFormat().resolvedOptions().timeZone
+          const options = {
+            timeZone: visitorTimeZone,
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+          }
+          const [day, month, year, hour, minute, second] = new Intl.DateTimeFormat('en-GB', options)
+            .format(new Date(fullDate))
+            .match(/\d+/g)
+          return `${year}-${month}-${day} ${hour}:${minute}:${second}`
+        }
+
         const loadShuoshuo = async () => {
           try {
             if (pageCode != ''){
@@ -84,18 +103,28 @@
 
             const renderData = (dataSlice) => {
               const content = dataSlice.map(item => {
-                const formattedDate = item.createTime
+                const formattedDate = formatToTimeZone(item.createTime)
+                let pinned = item.pinned
+                if (pinned){
+                  pinned = `<i class="fa-solid fa-thumbtack"></i>`
+                }else{
+                  pinned = ''
+                }
                 const tags = item.property.tags && item.property.tags.map(tag => `<span class="shuoshuo-tag">${tag}</span>`).join('') || ''
                 let resources = null
+                let isSingleImage = ''
                 if(item.resources!="[]"){
+                  if(item.resources.length == 1) isSingleImage = " single-image"
                   resources = item.resources && item.resources.map(resources => `
                   <span class="shuoshuo-resources-image">
                     <a href="!{url_for(page.shuoshuo_url)}/file/${resources.name}/${resources.filename}" data-fancybox="gallery" data-src="!{url_for(page.shuoshuo_url)}/file/${resources.name}/${resources.filename}">
                       <img class="lazy" src="!{url_for(page.shuoshuo_url)}/file/${resources.name}/${resources.filename}?thumbnail=true">
-                    </a>                 
-                   </span>
-                  `).join('') || ''
+                    </a>
+                  </span>
+                  `
+                  ).join('') || ''
                 }
+
                 let content = item.content.replace(/^(#\S+\s*)+/, '')
                 content = DOMPurify.sanitize(marked.parse(content.replace(/^[\u200B\u200C\u200D\u200E\u200F\uFEFF]/,"")))
                 
@@ -121,10 +150,14 @@
                           <time class="shuoshuo-date" title="${formattedDate}">
                             ${btf.diffDate(formattedDate, true)}
                           </time>
+                          
+                        </div>
+                        <div class="shuoshuo-other-info">
+                          ${pinned}
                         </div>
                       </div>
                       <div class="shuoshuo-content">${content}</div>
-                      <div class="shuoshuo-resources">${resources}</div>
+                      <div class="shuoshuo-resources${isSingleImage}">${resources}</div>
                       <div class="shuoshuo-footer ${tags ? 'flex-between' : 'flex-end'}">
                         ${tags ? `<div class="shuoshuo-tags">${tags}</div>` : ''}
                         ${commentButton}

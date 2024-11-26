@@ -48,7 +48,7 @@
       (() => {
         const limitConfig = !{ JSON.stringify(page.limit || {}) }
         let pageCode = ""
-        let filterValue = "creator=='users/1'&&visibilities==['PUBLIC']"
+        let filterValue = "creator=='users/1'&&visibilities==['PUBLIC']&&order_by_pinned==true"
         let encodedFilterValue = encodeURIComponent(filterValue)
         let url = `!{url_for(page.shuoshuo_url)}/api/v1/memos?filter=${encodedFilterValue}`
 
@@ -70,13 +70,13 @@
               main.innerHTML += '<button id="loadmore" type="button">加载更多</button>';
 
               let btn = document.querySelector("#loadmore")
+
               btn.addEventListener("click", function () {
+                btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`
                 window.pjax ? loadShuoshuo() : window.addEventListener('load', loadShuoshuo)
-                if (pageCode != "") {
-                    document.querySelector("#loadmore").remove()
-                    return
-                }
               })
+            }else{
+              pageCode = ''
             }
 
             const container = document.getElementById('article-container')
@@ -163,6 +163,11 @@
 
             renderData(memos.slice(start, 10))
             start += 10
+
+            let btn = document.querySelector("#loadmore")
+            if (pageCode == ''){
+              btn.remove()
+            }
 
             // 获取评论数
             const eleGroup = document.querySelectorAll('.artalk-count')

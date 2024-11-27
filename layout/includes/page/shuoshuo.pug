@@ -147,7 +147,8 @@
                         </div>
                         <div class="shuoshuo-info">
                           <div class="shuoshuo-author">${item.author || '!{config.author}'}</div>
-                          <time class="shuoshuo-date" title="${formattedDate}">
+                          <time class="shuoshuo-date" title="${formattedDate}" 
+                          onclick="javascript:this.innerHTML=='${formattedDate}' ? this.innerHTML='${btf.diffDate(formattedDate, true)}' : this.innerHTML=this.title">
                             ${btf.diffDate(formattedDate, true)}
                           </time>
                           

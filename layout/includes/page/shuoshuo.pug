@@ -218,9 +218,13 @@
             keyArray.forEach((key, index) => {
               eleGroup[index].textContent = result.data[key] || 0
             })
+
+            if(Prism != null) Prism.highlightAll()
             
             if (container.lastElementChild) observer.observe(container.lastElementChild)
           } catch (error) {
+            main = document.querySelector("#page")
+            main.innerHTML += '<span>加载失败，请刷新重试</span>';
             console.error(error)
           }
         };

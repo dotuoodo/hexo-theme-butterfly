@@ -48,9 +48,10 @@
       (() => {
         const limitConfig = !{ JSON.stringify(page.limit || {}) }
         let pageCode = ""
-        let filterValue = "creator=='users/1'&&visibilities==['PUBLIC']&&order_by_pinned==true"
-        let encodedFilterValue = encodeURIComponent(filterValue)
-        let url = `!{url_for(page.shuoshuo_url)}/api/v1/memos?filter=${encodedFilterValue}`
+        //let filterValue = "creator=='users/1'&&visibilities==['PUBLIC']&&order_by_pinned==true"
+        //let encodedFilterValue = encodeURIComponent(filterValue)
+        //let url = `!{url_for(page.shuoshuo_url)}/api/v1/memos?${encodedFilterValue}`
+        let url = `!{url_for(page.shuoshuo_url)}/api/v1/memos`
 
         const formatToTimeZone = (date) => {
           const fullDate = date.length === 10 ? `${date} 00:00:00` : date
@@ -74,9 +75,9 @@
         const loadShuoshuo = async () => {
           try {
             if (pageCode != ''){
-              url = `!{url_for(page.shuoshuo_url)}/api/v1/memos?pageToken=${pageCode}&filter=${encodedFilterValue}`
+              url = `!{url_for(page.shuoshuo_url)}/api/v1/memos?pageToken=${pageCode}`
             }else{
-              let url = `!{url_for(page.shuoshuo_url)}/api/v1/memos?filter=${encodedFilterValue}`
+              let url = `!{url_for(page.shuoshuo_url)}/api/v1/memos`
             }
       
             const response = await fetch(url)
@@ -110,7 +111,7 @@
                 }else{
                   pinned = ''
                 }
-                const tags = item.property.tags && item.property.tags.map(tag => `<span class="shuoshuo-tag">${tag}</span>`).join('') || ''
+                const tags = item.tags && item.tags.map(tag => `<span class="shuoshuo-tag">${tag}</span>`).join('') || ''
                 let resources = null
                 let isSingleImage = ''
                 if(item.resources!="[]"){
@@ -147,9 +148,8 @@
                         </div>
                         <div class="shuoshuo-info">
                           <div class="shuoshuo-author">${item.author || '!{config.author}'}</div>
-                          <time class="shuoshuo-date" title="${formattedDate}" 
-                          onclick="javascript:this.innerHTML=='${formattedDate}' ? this.innerHTML='${btf.diffDate(formattedDate, true)}' : this.innerHTML=this.title">
-                            ${btf.diffDate(formattedDate, true)}
+                          <time class="shuoshuo-date" title="${formattedDate}">
+                            ${formattedDate}
                           </time>
                           
                         </div>

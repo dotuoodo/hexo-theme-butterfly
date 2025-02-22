@@ -113,6 +113,7 @@
                 }
                 const tags = item.tags && item.tags.map(tag => `<span class="shuoshuo-tag">${tag}</span>`).join('') || ''
                 let resources = null
+                let location = null
                 let isSingleImage = ''
                 if(item.resources!="[]"){
                   if(item.resources.length == 1) isSingleImage = " single-image"
@@ -124,6 +125,9 @@
                   </span>
                   `
                   ).join('') || ''
+                }
+                if(item.location!=undefined){
+                  location = item.location.placeholder
                 }
 
                 let content = item.content.replace(/^(#\S+\s*)+/, '')
@@ -155,6 +159,7 @@
                         </div>
                         <div class="shuoshuo-other-info">
                           ${pinned}
+                          ${location ? `<div class="shuoshuo-location"><i class="fa-solid fa-location-dot"></i> ${location}</div>` : ''}
                         </div>
                       </div>
                       <div class="shuoshuo-content">${content}</div>

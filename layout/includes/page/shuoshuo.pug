@@ -84,19 +84,22 @@
             let data = await response.json()
             let memos = data.memos
 
-            if (data.nextPageToken != ''){
+            if (data.nextPageToken && data.nextPageToken != ""){
               pageCode = data.nextPageToken
               main = document.querySelector("#page")
               main.innerHTML += '<button id="loadmore" type="button">加载更多</button>';
 
               let btn = document.querySelector("#loadmore")
 
-              btn.addEventListener("click", function () {
-                btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`
-                window.pjax ? loadShuoshuo() : window.addEventListener('load', loadShuoshuo)
-              })
+              btn.addEventListener("click",loadmoreClick)
             }else{
               pageCode = ''
+            }
+
+            function loadmoreClick(){
+                btn.removeEventListener("click", loadmoreClick);
+                btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`
+                window.pjax ? loadShuoshuo() : window.addEventListener('load', loadShuoshuo)
             }
 
             const container = document.getElementById('article-container')
@@ -206,6 +209,11 @@
             let btn = document.querySelector("#loadmore")
             if (pageCode == '' && btn){
               btn.remove()
+            }
+
+            let loadingText = document.querySelector("#loading")
+            if (loadingText){
+              loadingText.remove()
             }
 
             // 获取评论数

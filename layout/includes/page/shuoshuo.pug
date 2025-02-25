@@ -115,19 +115,31 @@
                   pinned = ''
                 }
                 const tags = item.tags && item.tags.map(tag => `<span class="shuoshuo-tag">${tag}</span>`).join('') || ''
-                let resources = null
+                let resources = ""
                 let location = null
                 let isSingleImage = ''
-                if(item.resources!="[]"){
+                if(item.resources.length != 0){
                   if(item.resources.length == 1) isSingleImage = " single-image"
-                  resources = item.resources && item.resources.map(resources => `
-                  <span class="shuoshuo-resources-image">
-                    <a href="!{url_for(page.shuoshuo_url)}/file/${resources.name}/${resources.filename}" data-fancybox="gallery" data-src="!{url_for(page.shuoshuo_url)}/file/${resources.name}/${resources.filename}">
-                      <img class="lazy" src="!{url_for(page.shuoshuo_url)}/file/${resources.name}/${resources.filename}?thumbnail=true">
-                    </a>
-                  </span>
-                  `
-                  ).join('') || ''
+                  for (var r of item.resources) {
+                    if(r.externalLink!=""){
+                      resources +=`
+                      <span class="shuoshuo-resources-image">
+                        <a href="${r.externalLink}" data-fancybox="gallery" data-src=${r.externalLink}>
+                          <img class="lazy" src="${r.externalLink}">
+                        </a>
+                      </span>
+                      `
+                    }else{
+                      resources +=`
+                      <span class="shuoshuo-resources-image">
+                        <a href="!{url_for(page.shuoshuo_url)}/file/${r.name}/${r.filename}" data-fancybox="gallery" data-src="!{url_for(page.r)}/file/${r.name}/${r.filename}">
+                          <img class="lazy" src="!{url_for(page.shuoshuo_url)}/file/${r.name}/${r.filename}?thumbnail=true">
+                        </a>
+                      </span>
+                      `
+                    }
+                  }
+
                 }
                 if(item.location!=undefined){
                   location = item.location.placeholder

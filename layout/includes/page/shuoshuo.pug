@@ -119,17 +119,20 @@
                 let location = null
                 let isSingleImage = ''
                 if(item.resources.length != 0){
-                  if(item.resources.length == 1) isSingleImage = " single-image"
                   for (var r of item.resources) {
                     if(r.externalLink!=""){
+                      const thumbLink = r.externalLink
+                        .replace("memos/", "memos/thumb/") // 修改为缩略图路径
+                        .split('?')[0]
                       resources +=`
                       <span class="shuoshuo-resources-image">
                         <a href="${r.externalLink}" data-fancybox="gallery" data-src=${r.externalLink}>
-                          <img class="lazy" src="${r.externalLink}">
+                          <img class="lazy" src="${thumbLink}">
                         </a>
                       </span>
                       `
                     }else{
+                      if(item.resources.length == 1) isSingleImage = " single-image"
                       resources +=`
                       <span class="shuoshuo-resources-image">
                         <a href="!{url_for(page.shuoshuo_url)}/file/${r.name}/${r.filename}" data-fancybox="gallery" data-src="!{url_for(page.r)}/file/${r.name}/${r.filename}">

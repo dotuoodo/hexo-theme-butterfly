@@ -2,13 +2,6 @@
 #post-info  
   #post-firstinfo
     .meta-firstline
-      if page.cc
-        span.post-meta-original
-          a.post-meta-original(title='该文章为转载文章，注意版权协议') #[=page.cc]
-      else if page.cc !== false
-        span.post-meta-original
-          a.post-meta-original(title='该文章为原创文章，注意版权协议') 原创
-      
       if page.custominfo
         span.post-meta-custom
           a.post-meta-customs #[=page.custominfo]

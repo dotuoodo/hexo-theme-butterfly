@@ -107,7 +107,13 @@
 
             const renderData = (dataSlice) => {
               const content = dataSlice.map(item => {
-                const formattedDate = formatToTimeZone(item.createTime)
+                let formattedDate = formatToTimeZone(item.createTime)
+                let date = ""
+                if(btf.diffDate(formattedDate, false) <= 30) {
+                  date = btf.diffDate(formattedDate, true)
+                }else{
+                  date = formattedDate
+                }
                 let pinned = item.pinned
                 if (pinned){
                   pinned = `<i class="fa-solid fa-thumbtack"></i>`
@@ -171,7 +177,7 @@
                         <div class="shuoshuo-info">
                           <div class="shuoshuo-author">${item.author || '!{config.author}'}</div>
                           <time class="shuoshuo-date" title="${formattedDate}">
-                            ${formattedDate}
+                            ${date}
                           </time>
                           
                         </div>

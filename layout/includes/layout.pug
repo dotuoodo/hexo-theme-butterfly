@@ -10,6 +10,7 @@ html(lang=config.language data-theme=theme.display_mode class=htmlClassHideAside
   head
     include ./head.pug
   body
+    <div id="read-progress" class="read-progress" data-pjax></div>
     !=partial('includes/loading/index', {}, {cache: true})
 
     if theme.background

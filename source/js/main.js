@@ -381,12 +381,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const rightsideScrollPercent = currentTop => {
     const scrollPercent = btf.getScrollPercent(currentTop, document.body)
     const goUpElement = document.getElementById('go-up')
+    const progressBar = document.getElementById('read-progress')
+    progressBar.style.width = scrollPercent + '%'
 
     if (scrollPercent < 95) {
       goUpElement.classList.add('show-percent')
       goUpElement.querySelector('.scroll-percent').textContent = scrollPercent
-    } else {
+    }else if (Number.isNaN(scrollPercent)){
       goUpElement.classList.remove('show-percent')
+      progressBar.style.width = '0%'
+    }else{
+      goUpElement.classList.remove('show-percent')
+      progressBar.style.width = '100%'
     }
   }
 
@@ -411,7 +417,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 如果文檔高度小於視窗高度,直接返回
-    if (checkDocumentHeight()) return
+    if (checkDocumentHeight()){
+      rightsideScrollPercent()
+      return
+    } 
 
     // find the scroll direction
     const scrollDirection = currentTop => {

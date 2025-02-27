@@ -109,16 +109,14 @@
               const content = dataSlice.map(item => {
                 let formattedDate = formatToTimeZone(item.createTime)
                 let date = ""
+                let pinned = ""
                 if(btf.diffDate(formattedDate, false) <= 30) {
                   date = btf.diffDate(formattedDate, true)
                 }else{
                   date = formattedDate
                 }
-                let pinned = item.pinned
-                if (pinned){
+                if (item.pinned != ""){
                   pinned = `<i class="fa-solid fa-thumbtack"></i>`
-                }else{
-                  pinned = ''
                 }
                 const tags = item.tags && item.tags.map(tag => `<span class="shuoshuo-tag">${tag}</span>`).join('') || ''
                 let resources = ""

@@ -49,6 +49,9 @@
         const limitConfig = !{ JSON.stringify(page.limit || {}) }
         let pageCode = ""
         let url = `!{url_for(page.shuoshuo_url)}/api/v1/memos?parent=users/1`
+        let count_url = `!{url_for(page.shuoshuo_url)}/api/v1/users/-/stats`
+        let page_title = document.querySelector(".page-title")
+        let count_loaded = 0
 
         const formatToTimeZone = (date) => {
           const fullDate = date.length === 10 ? `${date} 00:00:00` : date
@@ -74,6 +77,12 @@
             const response = await fetch(url)
             let data = await response.json()
             let memos = data.memos
+            if(!count_loaded){
+              const count_response = await fetch(count_url,{method:"POST"})
+              let count_data = await count_response.json()
+              page_title.innerHTML = "共有" + count_data.userStats[0].memoDisplayTimestamps.length + "条说说"
+              count_loaded = 1
+            }
 
             if (data.nextPageToken && data.nextPageToken != ""){
               pageCode = data.nextPageToken

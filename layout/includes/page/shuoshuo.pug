@@ -48,10 +48,7 @@
       (() => {
         const limitConfig = !{ JSON.stringify(page.limit || {}) }
         let pageCode = ""
-        //let filterValue = "creator=='users/1'&&visibilities==['PUBLIC']&&order_by_pinned==true"
-        //let encodedFilterValue = encodeURIComponent(filterValue)
-        //let url = `!{url_for(page.shuoshuo_url)}/api/v1/memos?${encodedFilterValue}`
-        let url = `!{url_for(page.shuoshuo_url)}/api/v1/memos`
+        let url = `!{url_for(page.shuoshuo_url)}/api/v1/memos?parent=users/1`
 
         const formatToTimeZone = (date) => {
           const fullDate = date.length === 10 ? `${date} 00:00:00` : date
@@ -74,12 +71,6 @@
 
         const loadShuoshuo = async () => {
           try {
-            if (pageCode != ''){
-              url = `!{url_for(page.shuoshuo_url)}/api/v1/memos?pageToken=${pageCode}`
-            }else{
-              let url = `!{url_for(page.shuoshuo_url)}/api/v1/memos`
-            }
-      
             const response = await fetch(url)
             let data = await response.json()
             let memos = data.memos
@@ -95,6 +86,8 @@
             }else{
               pageCode = ''
             }
+
+            if (pageCode != '') url += `&pageToken=${pageCode}`
 
             function loadmoreClick(){
                 btn.removeEventListener("click", loadmoreClick);

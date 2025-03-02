@@ -158,10 +158,16 @@
                 content = DOMPurify.sanitize(marked.parse(content.replace(/^[\u200B\u200C\u200D\u200E\u200F\uFEFF]/,"")))
                 
                 const commentButton = item.name && !{commentsJsLoad}
-                  ? `<div class="shuoshuo-comment-btn" onclick="addCommentToShuoshuo(event)">
+                  ? `
+                  <div class="shuoshuo-comment-btn" onclick="addCommentToShuoshuo(event)">
                       <span class="artalk-count" data-page-key="/essay?key=${item.name}"><i class="fa-solid fa-spinner fa-spin"></i></span>
                       <i class="fa-solid fa-comments"></i>
-                    </div>`
+                  </div>
+                  <div class="shuoshuo-like-btn" onclick="addLike('${item.name}')">
+                    <span class="like-count" data-page-name="${item.name}"><i class="fa-solid fa-spinner fa-spin"></i></span>
+                    <i class="fa-solid fa-thumbs-up"></i>
+                  </div>
+                  `
                   : ''
                 const commentContainer = item.name
                   ? `<div class="shuoshuo-comment no-comment" data-key="${item.name}"></div>`
@@ -235,6 +241,27 @@
             let loadingText = document.querySelector("#loading")
             if (loadingText){
               loadingText.remove()
+            }
+
+            // 获取点赞数
+            if(page.likes_url != ""){
+              const likeGroup = document.querySelectorAll('.like-count')
+              const pageNameArray = Array.from(likeGroup).map(i => i.getAttribute('data-page-name'))
+              try{
+                const params = new URLSearchParams({
+                  'page_names': pageNameArray
+                })
+                const likesData = await fetch(`!{url_for(page.likes_url)}/like/pages?${params}`)
+                const likesResult = await likesData.json()
+                pageNameArray.forEach((key, index) => {
+                  likeGroup[index].textContent = likesResult.data[key]
+                })
+              }catch(e){
+                console.log(e)
+                pageNameArray.forEach((key, index) => {
+                  likeGroup[index].textContent = "-"
+                })
+              }
             }
 
             // 获取评论数

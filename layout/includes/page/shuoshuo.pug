@@ -245,16 +245,21 @@
 
             // 获取点赞数
             if(page.likes_url != ""){
+              let likeId = localStorage.getItem('like_id') || crypto.randomUUID();
+              localStorage.setItem('like_id', likeId);
               const likeGroup = document.querySelectorAll('.like-count')
               const pageNameArray = Array.from(likeGroup).map(i => i.getAttribute('data-page-name'))
               try{
                 const params = new URLSearchParams({
                   'page_names': pageNameArray
                 })
-                const likesData = await fetch(`!{url_for(page.likes_url)}/like/pages?${params}`)
+                const likesData = await fetch(`!{url_for(page.likes_url)}/like/pages?like_id=${likeId}&${params}`)
                 const likesResult = await likesData.json()
+                const likedArray = likesResult.liked
                 pageNameArray.forEach((key, index) => {
+                  const btn = likeGroup[index].closest('.shuoshuo-like-btn');
                   likeGroup[index].textContent = likesResult.data[key]
+                  btn.classList.toggle('active', likedArray.includes(key));
                 })
               }catch(e){
                 console.log(e)

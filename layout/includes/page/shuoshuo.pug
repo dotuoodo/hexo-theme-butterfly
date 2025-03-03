@@ -47,11 +47,12 @@
     script.
       (() => {
         const limitConfig = !{ JSON.stringify(page.limit || {}) }
-        let pageCode = ""
-        let url = `!{url_for(page.shuoshuo_url)}/api/v1/memos?parent=users/1`
+        let pageToken = ""
+        let isLoading = false
+        let baseUrl = `!{url_for(page.shuoshuo_url)}/api/v1/memos?parent=users/1`
         let count_url = `!{url_for(page.shuoshuo_url)}/api/v1/users/-/stats`
         let page_title = document.querySelector(".page-title")
-        let count_loaded = 0
+        let totalCount = 0
 
         const formatToTimeZone = (date) => {
           const fullDate = date.length === 10 ? `${date} 00:00:00` : date
@@ -72,36 +73,56 @@
           return `${year}-${month}-${day} ${hour}:${minute}:${second}`
         }
 
-        const loadShuoshuo = async () => {
+        const createLoadButton = () => {
+          const existingBtn = document.querySelector("#loadmore")
+          if (!existingBtn && pageToken) {
+            const btn = document.createElement('button')
+            btn.id = 'loadmore'
+            btn.type = 'button'
+            btn.textContent = '加载更多'
+            btn.addEventListener('click', loadMoreHandler)
+            document.querySelector("#page").appendChild(btn)
+          }
+        }
+
+        const loadMoreHandler = async () => {
+          if (isLoading || !pageToken) return
+          
+          const btn = document.querySelector("#loadmore")
+          btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`
+          btn.disabled = true
+          isLoading = true
+
           try {
-            const response = await fetch(url)
-            let data = await response.json()
+            await loadShuoshuo(false)
+          } finally {
+            isLoading = false
+            btn.disabled = false
+            btn.textContent = '加载更多'
+          }
+        }
+
+        const loadShuoshuo = async (isFirstLoad = true) => {
+          try {
+            const currentUrl = isFirstLoad ? baseUrl : `${baseUrl}&pageToken=${pageToken}`
+            const response = await fetch(currentUrl)
+            const data = await response.json()
             let memos = data.memos
-            if(!count_loaded){
+
+            if (isFirstLoad) {
               const count_response = await fetch(count_url,{method:"POST"})
-              let count_data = await count_response.json()
-              page_title.innerHTML = "共有" + count_data.userStats[0].memoDisplayTimestamps.length + "条说说"
-              count_loaded = 1
+              const count_data = await count_response.json()
+              totalCount = count_data.userStats[0].memoDisplayTimestamps.length
+              page_title.innerHTML = "共有" + totalCount + "条说说"
             }
 
-            if (data.nextPageToken && data.nextPageToken != ""){
-              pageCode = data.nextPageToken
-              main = document.querySelector("#page")
-              main.innerHTML += '<button id="loadmore" type="button">加载更多</button>';
+            pageToken = data.nextPageToken || ""
 
-              let btn = document.querySelector("#loadmore")
-
-              btn.addEventListener("click",loadmoreClick)
-            }else{
-              pageCode = ''
-            }
-
-            if (pageCode != '') url += `&pageToken=${pageCode}`
-
-            function loadmoreClick(){
-                btn.removeEventListener("click", loadmoreClick);
-                btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`
-                window.pjax ? loadShuoshuo() : window.addEventListener('load', loadShuoshuo)
+            if (!pageToken) {
+              const btn = document.querySelector("#loadmore")
+              btn.remove()
+            } else if (isFirstLoad) {
+              createLoadButton()
             }
 
             const container = document.getElementById('article-container')
@@ -112,44 +133,41 @@
                 let formattedDate = formatToTimeZone(item.createTime)
                 let date = ""
                 let pinned = ""
+                let resources = ""
+                let location = null
+                let isSingleImage = ''
+      
                 if(btf.diffDate(formattedDate, false) <= 30) {
                   date = btf.diffDate(formattedDate, true)
                 }else{
                   date = formattedDate
                 }
+
                 if (item.pinned != ""){
                   pinned = `<i class="fa-solid fa-thumbtack"></i>`
                 }
-                const tags = item.tags && item.tags.map(tag => `<span class="shuoshuo-tag">${tag}</span>`).join('') || ''
-                let resources = ""
-                let location = null
-                let isSingleImage = ''
-                if(item.resources.length != 0){
-                  for (var r of item.resources) {
-                    if(r.externalLink!=""){
-                      const thumbLink = r.externalLink
-                        .replace("memos/", "memos/thumb/") // 修改为缩略图路径
-                        .split('?')[0]
-                      resources +=`
-                      <span class="shuoshuo-resources-image">
-                        <a href="${r.externalLink}" data-fancybox="gallery" data-src=${r.externalLink}>
-                          <img class="lazy" src="${thumbLink}">
-                        </a>
-                      </span>
-                      `
-                    }else{
-                      if(item.resources.length == 1) isSingleImage = " single-image"
-                      resources +=`
-                      <span class="shuoshuo-resources-image">
-                        <a href="!{url_for(page.shuoshuo_url)}/file/${r.name}/${r.filename}" data-fancybox="gallery" data-src="!{url_for(page.r)}/file/${r.name}/${r.filename}">
-                          <img class="lazy" src="!{url_for(page.shuoshuo_url)}/file/${r.name}/${r.filename}?thumbnail=true">
-                        </a>
-                      </span>
-                      `
-                    }
-                  }
 
+                const tags = item.tags && item.tags.map(tag => `<span class="shuoshuo-tag">${tag}</span>`).join('') || ''
+                
+                if(item.resources.length != 0){
+                  resources = item.resources.map(r => {
+                    const isExternal = r.externalLink !== "";
+                    const [thumbLink, fileUrl] = isExternal ? [
+                      r.externalLink.replace("memos/", "memos/thumb/").split('?')[0],
+                      r.externalLink
+                    ] : [
+                      `!{url_for(page.shuoshuo_url)}/file/${r.name}/${r.filename}?thumbnail=true`,
+                      `!{url_for(page.shuoshuo_url)}/file/${r.name}/${r.filename}`
+                    ];
+                    
+                    return `<span class="shuoshuo-resources-image">
+                      <a href="${fileUrl}" data-fancybox="gallery">
+                        <img class="lazy" src="${thumbLink}">
+                      </a>
+                    </span>`;
+                  }).join('');
                 }
+
                 if(item.location!=undefined){
                   location = item.location.placeholder
                 }
@@ -185,7 +203,6 @@
                           <time class="shuoshuo-date" title="${formattedDate}">
                             ${date}
                           </time>
-                          
                         </div>
                         <div class="shuoshuo-other-info">
                           ${pinned}
@@ -232,12 +249,8 @@
 
             renderData(memos.slice(start, 10))
             start += 10
-
-            let btn = document.querySelector("#loadmore")
-            if (pageCode == '' && btn){
-              btn.remove()
-            }
-
+            
+            // 移除加载文本
             let loadingText = document.querySelector("#loading")
             if (loadingText){
               loadingText.remove()
@@ -289,14 +302,13 @@
             
             if (container.lastElementChild) observer.observe(container.lastElementChild)
           } catch (error) {
-            main = document.querySelector("#page")
-            main.innerHTML = '<h1>加载失败，请刷新重试</h1><br>';
-            main.innerHTML += error;
             console.error(error)
+            const main = document.querySelector("#page")
+            main.innerHTML = '<h1>加载失败，请刷新重试</h1>'
           }
         };
 
-        window.pjax ? loadShuoshuo() : window.addEventListener('load', loadShuoshuo)
+        window.pjax ? loadShuoshuo() : window.addEventListener('load', () => loadShuoshuo(true))
       })()
   else
     if site.data.shuoshuo

@@ -66,6 +66,7 @@ mixin indexPostUI()
                   i.fas.fa-comments
                   if block
                     block
+                  span.article-meta-label= ' ' + _p('card_post_count')
 
               if theme.comments.card_post_count && theme.comments.use
                 case theme.comments.use[0]

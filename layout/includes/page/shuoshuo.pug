@@ -7,7 +7,8 @@
 //-     - tag2
 
 - page.toc = false
-- const serverURL = theme.waline.serverURL
+- const artalkServer = theme.artalk.server
+- const artalkSite = theme.artalk.site
 #article-container
   if page.comments !== false && theme.comments.use
     - commentsJsLoad = true
@@ -177,7 +178,7 @@
                 const commentButton = item.name && !{commentsJsLoad}
                   ? `
                   <div class="shuoshuo-comment-btn" onclick="addCommentToShuoshuo(event)">
-                      <span class="shuoshuo-comment-count" data-page-key="/essay?key=${item.name}"><i class="fa-solid fa-spinner fa-spin"></i></span>
+                      <span class="artalk-count" data-page-key="/essay?key=${item.name}"><i class="fa-solid fa-spinner fa-spin"></i></span>
                       <i class="fa-solid fa-comments"></i>
                   </div>
                   <div class="shuoshuo-like-btn" onclick="addLike('${item.name}')">
@@ -209,7 +210,7 @@
                       <div class="shuoshuo-footer ${tags ? 'flex-between' : 'flex-end'}">
                         ${tags ? `<div class="shuoshuo-tags">${tags}</div>` : ''}
                         ${commentButton}
-                      </div>                        
+                      </div>
                     </div>
                     ${commentContainer}
                   </div>`
@@ -277,13 +278,19 @@
             }
 
             // 获取评论数
-            const eleGroup = document.querySelectorAll('.shuoshuo-comment-count')
+            const eleGroup = document.querySelectorAll('.artalk-count')
             const keyArray = Array.from(eleGroup).map(i => i.getAttribute('data-page-key'))
-
-            const res = await fetch(`!{serverURL}/api/comment?type=count&url=${keyArray}`, { method: 'GET' })
+            const headerList = {
+              method: 'GET',
+            }
+            const searchParams = new URLSearchParams({
+              'site_name': '!{artalkSite}',
+              'page_keys': keyArray
+            })
+            const res = await fetch(`!{artalkServer}/api/v2/stats/page_comment?${searchParams}`, headerList)
             const result = await res.json()
-            result.data.forEach((count, index) => {
-              eleGroup[index].textContent = count
+            keyArray.forEach((key, index) => {
+              eleGroup[index].textContent = result.data[key] || 0
             })
 
             if(Prism != null) Prism.highlightAll()

@@ -133,7 +133,7 @@
                 let formattedDate = formatToTimeZone(item.createTime)
                 let date = ""
                 let pinned = ""
-                let resources = ""
+                let attachments = ""
                 let location = null
                 let isSingleImage = ''
       
@@ -149,8 +149,8 @@
 
                 const tags = item.tags && item.tags.map(tag => `<span class="shuoshuo-tag">${tag}</span>`).join('') || ''
                 
-                if(item.resources.length != 0){
-                  resources = item.resources.map(r => {
+                if(item.attachments.length != 0){
+                  attachments = item.attachments.map(r => {
                     const isExternal = r.externalLink !== "";
                     const [thumbLink, fileUrl] = isExternal ? [
                       r.externalLink.replace("memos/", "memos/thumb/").split('?')[0],
@@ -160,12 +160,13 @@
                       `!{url_for(page.shuoshuo_url)}/file/${r.name}/${r.filename}`
                     ];
                     
-                    return `<span class="shuoshuo-resources-image">
+                    return `<span class="shuoshuo-attachments-image">
                       <a href="${fileUrl}" data-fancybox="gallery">
                         <img class="lazy" src="${thumbLink}">
                       </a>
                     </span>`;
                   }).join('');
+                  if(item.attachments.length == 1) isSingleImage = 'single-image'
                 }
 
                 if(item.location!=undefined){
@@ -201,7 +202,7 @@
                         </div>
                       </div>
                       <div class="shuoshuo-content">${content}</div>
-                      <div class="shuoshuo-resources${isSingleImage}">${resources}</div>
+                      <div class="shuoshuo-attachments ${isSingleImage}">${attachments}</div>
                       <div class="shuoshuo-info">
                           <time class="shuoshuo-date" title="${formattedDate}">
                             ${date}

@@ -109,12 +109,12 @@
             const data = await response.json()
             let memos = data.memos
 
-            if (isFirstLoad) {
-              const count_response = await fetch(count_url,{method:"POST"})
-              const count_data = await count_response.json()
-              totalCount = count_data.userStats[0].memoDisplayTimestamps.length
-              page_title.innerHTML = "共有" + totalCount + "条说说"
-            }
+            //- if (isFirstLoad) {
+            //-   const count_response = await fetch(count_url,{method:"POST"})
+            //-   const count_data = await count_response.json()
+            //-   totalCount = count_data.userStats[0].memoDisplayTimestamps.length
+            //-   page_title.innerHTML = "共有" + totalCount + "条说说"
+            //- }
 
             pageToken = data.nextPageToken || ""
 
